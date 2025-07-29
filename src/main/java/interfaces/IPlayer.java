@@ -49,6 +49,7 @@ public interface IPlayer {
      */
     public void setPendingFrom(Position pending);
 
+    public void setPieces(List<IPiece> pieces);
     /**
      * Returns true if the player has failed (e.g., lost their king).
      * 

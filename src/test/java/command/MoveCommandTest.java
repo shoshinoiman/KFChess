@@ -17,7 +17,7 @@ public class MoveCommandTest {
 
         when(board.isMoveLegal(from, to)).thenReturn(true);
 
-        MoveCommand cmd = new MoveCommand(from, to, board);
+        MoveCommand cmd = new MoveCommand(from, to, board, null);
         cmd.execute();
 
         verify(board).move(from, to);
@@ -31,7 +31,7 @@ public class MoveCommandTest {
 
         when(board.isMoveLegal(from, to)).thenReturn(false);
 
-        MoveCommand cmd = new MoveCommand(from, to, board);
+        MoveCommand cmd = new MoveCommand(from, to, board, null);
         cmd.execute();
 
         verify(board, never()).move(from, to);

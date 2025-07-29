@@ -7,6 +7,7 @@ import events.GameEvent;
 import game.Game;
 import interfaces.IGame;
 import interfaces.IPlayer;
+import listener.MoveListener;
 import listener.ScoreListener;
 import listener.SoundListener;
 import pieces.Position;
@@ -44,6 +45,11 @@ public class Main {
              // מעביר את הפאנל
             EventPublisher.getInstance().subscribe(GameEvent.PIECE_CAPTURED, scoreListener1);
             EventPublisher.getInstance().subscribe(GameEvent.PIECE_CAPTURED, scoreListener2);
+
+// 
+            // MoveListener moveListener = new MoveListener();
+            MoveListener moveListener = new MoveListener(gameView.getPlayer1Panel(), gameView.getPlayer2Panel());
+            EventPublisher.getInstance().subscribe(GameEvent.PIECE_MOVED, moveListener);
 
            
             // יצירת SoundListener ורישום שלו למאזין

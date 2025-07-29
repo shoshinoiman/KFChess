@@ -22,24 +22,28 @@ public class Piece implements IPiece {
     private Position pos;
 
     private boolean wasCaptured = false;
+    private int player; // שדה חדש לשחקן
 
-    public Piece(EPieceType type, Map<EState, IState> states, EState initialState, Position pos) throws IOException {
+    public Piece(EPieceType type, Map<EState, IState> states, EState initialState, Position pos, int player) throws IOException {
         id = pos.getRow() + "," + pos.getCol();
         this.states = states;
         this.currentStateName = initialState;
         this.currentState = states.get(initialState);
         this.pos = pos;
-
         this.type = type;
+        this.player = player;
 
         moves = new Moves(type);
     }
 
     @Override
     public int getPlayer() {
-        return BoardConfig.getPlayerOf(Integer.parseInt(this.getId().split(",")[0]));
+        return player;
     }
-
+    @Override
+    public void setPlayer(int id){
+        this.player = id;
+    }
 
 
     @Override
@@ -65,7 +69,6 @@ public class Piece implements IPiece {
             LogUtils.logDebug("State '" + newStateName + "' not found!");
         }
     }
-
 
     @Override
     public IState getCurrentState() {
@@ -93,6 +96,9 @@ public class Piece implements IPiece {
         }
     }
 
+    public Position getPosition() {
+        return pos;
+    }
 
     @Override
     public void move(Position to) {
@@ -111,7 +117,7 @@ public class Piece implements IPiece {
         if (states.containsKey(EState.JUMP)) {
             currentStateName = EState.JUMP;
             currentState = states.get(EState.JUMP);
-            currentState.reset(EState.JUMP,pos, pos);
+            currentState.reset(EState.JUMP, pos, pos);
         } else {
             System.err.println("Missing 'jump' state!");
             LogUtils.logDebug("Missing 'jump' state!");
@@ -124,15 +130,15 @@ public class Piece implements IPiece {
     }
 
     public void markCaptured() {
-        EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED, 
-        new GameEvent(GameEvent.PIECE_CAPTURED, this));
+        EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED,
+                new GameEvent(GameEvent.PIECE_CAPTURED, this));
         this.wasCaptured = true;
     }
 
     @Override
     public int getRow() {
         return pos.getRow();
-    } 
+    }
 
     @Override
     public int getCol() {
@@ -160,7 +166,12 @@ public class Piece implements IPiece {
     }
 
     @Override
-    public boolean canMoveOver(){
+    public boolean canMoveOver() {
         return currentStateName.isCanMoveOver();
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        this.pos = position.copy();
     }
 }

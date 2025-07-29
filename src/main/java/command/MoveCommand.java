@@ -1,5 +1,4 @@
 package command;
-
 import events.EventPublisher;
 import events.GameEvent;
 import interfaces.*;
@@ -10,12 +9,13 @@ import utils.LogUtils;
  * Command for moving a piece from one position to another on the board.
  */
 public class MoveCommand implements ICommand {
-    /** The starting position of the move. */
+    /** The xbfcvzgzvstarting position of the move. */
     private final Position from;
     /** The target position of the move. */
     private final Position to;
     /** The board on which the move is performed. */
     private final IBoard board;
+    private final IPiece piece;
 
     /**
      * Constructs a MoveCommand for moving a piece from one position to another.
@@ -24,7 +24,8 @@ public class MoveCommand implements ICommand {
      * @param to The target position
      * @param board The board instance
      */
-    public MoveCommand(Position from, Position to, IBoard board) {
+    public MoveCommand(Position from, Position to, IBoard board, IPiece piece) {
+        this.piece = piece;
         this.from = from;
         this.to = to;
         this.board = board;
@@ -45,6 +46,18 @@ public class MoveCommand implements ICommand {
         LogUtils.logDebug("Moving from " + from + " to " + to);
         board.move(from, to);
         EventPublisher.getInstance().publish(GameEvent.PIECE_MOVED, 
-            new GameEvent(GameEvent.PIECE_MOVED, board.getPiece(to)));
+            new GameEvent(GameEvent.PIECE_MOVED, this));
+    }
+    public Position getFrom() {
+        return from;
+    }
+    public Position getTo() {
+        return to;
+    }
+    public IBoard getBoard() {
+        return board;
+    }
+    public IPiece getPiece() {
+        return piece;
     }
 }

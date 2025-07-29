@@ -23,7 +23,7 @@ public class Player implements IPlayer{
     private static int mone = 0;
     private int scores = 0;
 
-    private final List<IPiece> pieces;
+    private List<IPiece> pieces;
     private boolean isFailed;
 
     /**
@@ -148,7 +148,7 @@ public class Player implements IPlayer{
             setPendingFrom(null);
             if(previous.equals(selected))
                 return new JumpCommand(board.getPiece(selected), board);
-            return new MoveCommand(previous, selected.copy(), board);
+            return new MoveCommand(previous, selected.copy(), board,board.getPiece(previous) );
         }
 
         return null;
@@ -157,6 +157,15 @@ public class Player implements IPlayer{
     @Override
     public int getScore(){
         return 0;
+    }
+
+    @Override
+    public void setPieces(List<IPiece> pieces) {
+        this.pieces = new ArrayList<>();
+        for(IPiece p : pieces) {
+            this.pieces.add(p);
+        }
+
     }
 
 }

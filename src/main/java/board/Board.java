@@ -2,9 +2,11 @@ package board;
 
 import interfaces.*;
 import pieces.EPieceType;
+import pieces.Piece;
 import pieces.Position;
 import utils.LogUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import events.EventPublisher;
@@ -25,7 +27,7 @@ public class Board implements IBoard {
      * Constructs the board with the given configuration and players.
      * Initializes the board grid with the pieces from each player.
      *
-     * @param bc Board configuration
+     * @param bc      Board configuration
      * @param players Array of players
      */
     public Board(BoardConfig bc, IPlayer[] players) {
@@ -42,6 +44,7 @@ public class Board implements IBoard {
 
     /**
      * Places a piece on the board at its logical position.
+     * 
      * @param piece The piece to place
      */
     @Override
@@ -93,7 +96,7 @@ public class Board implements IBoard {
      * Returns the player index for a given position.
      */
     @Override
-    public int getPlayerOf(Position pos){
+    public int getPlayerOf(Position pos) {
         return getPlayerOf(pos.getRow());
     }
 
@@ -101,7 +104,7 @@ public class Board implements IBoard {
      * Returns the player index for a given piece.
      */
     @Override
-    public int getPlayerOf(IPiece piece){
+    public int getPlayerOf(IPiece piece) {
         return getPlayerOf(Integer.parseInt(piece.getId().split(",")[0]));
     }
 
@@ -125,7 +128,7 @@ public class Board implements IBoard {
      * and handles captures before and after movement.
      */
     public void updateAll() {
-          
+
         // Step 1 - Reset previous positions
         for (int row = 0; row < boardConfig.numRowsCols.getX(); row++) {
             for (int col = 0; col < boardConfig.numRowsCols.getY(); col++) {
@@ -136,6 +139,7 @@ public class Board implements IBoard {
                     if (newRow != row || newCol != col) {
                         boardGrid[row][col] = null;
                     }
+
                 }
             }
         }
@@ -143,7 +147,8 @@ public class Board implements IBoard {
         // Step 2 - Update state and handle captures before movement
         for (IPlayer p : players) {
             for (IPiece piece : p.getPieces()) {
-                if (piece.isCaptured()) continue;
+                if (piece.isCaptured())
+                    continue;
 
                 if (piece.getCurrentState().isActionFinished()) {
                     int targetRow = piece.getCurrentState().getTargetRow();
@@ -151,24 +156,24 @@ public class Board implements IBoard {
 
                     IPiece target = boardGrid[targetRow][targetCol];
                     if (target != null && target != piece && !target.isCaptured() && target.canMoveOver()) {
-                        if (target.getCurrentStateName() == EState.JUMP){
-                            // EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED, 
+                        if (target.getCurrentStateName() == EState.JUMP) {
+                            // EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED,
                             // new GameEvent(GameEvent.PIECE_CAPTURED, piece));
                             players[piece.getPlayer()].markPieceCaptured(piece, players[target.getPlayer()]);
                             System.out.println("Captured before move: " + piece.getId());
                             LogUtils.logDebug("Captured before move: " + piece.getId());
                             piece.update();
                             // פרסום אירוע אכילה
-                           
+
                         } else {
-                            // EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED, 
+                            // EventPublisher.getInstance().publish(GameEvent.PIECE_CAPTURED,
                             // new GameEvent(GameEvent.PIECE_CAPTURED, target));
                             players[target.getPlayer()].markPieceCaptured(target, players[piece.getPlayer()]);
                             System.out.println("Captured before move: " + target.getId());
                             LogUtils.logDebug("Captured before move: " + target.getId());
-                            
+
                             // פרסום אירוע אכילה
-                           
+
                         }
                     }
                 }
@@ -179,8 +184,14 @@ public class Board implements IBoard {
 
         // Step 3 - Handle captures after landing and update board positions
         for (IPlayer p : players) {
+            List<IPiece>  pieces = new ArrayList<>();
             for (IPiece piece : p.getPieces()) {
-                if (piece.isCaptured()) continue;
+                pieces.add(piece);
+            }
+            for (IPiece piece : p.getPieces()) {
+
+                if (piece.isCaptured())
+                    continue;
 
                 int row = piece.getRow();
                 int col = piece.getCol();
@@ -190,7 +201,7 @@ public class Board implements IBoard {
                     System.out.println(existing.getCurrentStateName());
                     LogUtils.logDebug("State: " + existing.getCurrentStateName());
                     if (existing.getCurrentStateName() != EState.JUMP) {
-                        players[existing.getPlayer()].markPieceCaptured(existing,players[piece.getPlayer()]);
+                        players[existing.getPlayer()].markPieceCaptured(existing, players[piece.getPlayer()]);
                         System.out.println("Captured on landing: " + existing.getId());
                         LogUtils.logDebug("Captured on landing: " + existing.getId());
                     } else {
@@ -198,10 +209,29 @@ public class Board implements IBoard {
                         System.out.println("No capture: piece not jumping on landing");
                         LogUtils.logDebug("No capture: piece not jumping on landing");
                     }
-                }
 
+                }
+                // להפוך את החייל למלכה
+                if (piece.getType() == EPieceType.P) {
+                    if (row == 0 || row == boardConfig.numRowsCols.getX() - 1) {
+                        IPiece queenPiece = PiecesFactory.createPieceByCode(
+                            EPieceType.Q,
+                            // piece.getPosition(),
+                            new Position(row == 7 ? 0 : 7, col),
+                            boardConfig,
+                            piece.getPlayer() // מעביר את השחקן של החייל
+                        );
+                        queenPiece.setPosition(piece.getPosition());
+                        queenPiece.setState(piece.getCurrentStateName());
+                        pieces.remove(piece);
+                        pieces.add(queenPiece);
+                        piece = queenPiece;
+                    }
+                }
+                
                 boardGrid[row][col] = piece;
             }
+            p.setPieces(pieces);
         }
     }
 
@@ -210,13 +240,13 @@ public class Board implements IBoard {
      */
     @Override
     public boolean isInBounds(int r, int c) {
-        return boardConfig.isInBounds(r,c);
+        return boardConfig.isInBounds(r, c);
     }
 
     /**
      * Checks if the specified position is within board bounds.
      */
-    public boolean isInBounds(Position p){
+    public boolean isInBounds(Position p) {
         return isInBounds(p.getRow(), p.getCol());
     }
 
@@ -256,7 +286,6 @@ public class Board implements IBoard {
         return toPiece == null || fromPiece.getPlayer() != toPiece.getPlayer();
     }
 
-
     /**
      * Checks if the path between two positions is clear for movement.
      */
@@ -289,8 +318,9 @@ public class Board implements IBoard {
      */
     @Override
     public void jump(IPiece p) {
-        if (p == null) return;
-        
+        if (p == null)
+            return;
+
         p.jump();
     }
 
