@@ -3,9 +3,10 @@ package state;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import interfaces.EState;
-import pieces.Position;
-import state.PhysicsData;
+
+import server.interfaces.EState;
+import server.pieces.Position;
+import server.state.PhysicsData;
 
 public class PhysicsDataTest {
 

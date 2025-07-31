@@ -1,10 +1,14 @@
 package board;
 
-import interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import pieces.Position;
+
+import server.board.Board;
+import server.board.BoardConfig;
+import server.board.Dimension;
+import server.interfaces.*;
+import server.pieces.Position;
 
 import java.util.List;
 

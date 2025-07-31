@@ -1,8 +1,9 @@
 package command;
 
-import command.JumpCommand;
-import interfaces.IBoard;
-import interfaces.IPiece;
+import server.command.JumpCommand;
+import server.interfaces.IBoard;
+import server.interfaces.IPiece;
+
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;

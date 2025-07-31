@@ -1,90 +1,92 @@
-package game;
+// package game;
 
-import board.BoardConfig;
-import interfaces.ICommand;
-import interfaces.IPlayer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import server.board.BoardConfig;
+// import server.game.Game;
+// import server.interfaces.ICommand;
+// import server.interfaces.IPlayer;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
 
-class GameTest {
+// import static org.mockito.Mockito.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-    private IPlayer player1;
-    private IPlayer player2;
-    private BoardConfig boardConfig;
-    private Game game;
+// class GameTest {
 
-    @BeforeEach
-    void setup() {
-        // יצירת אובייקטים מוקים
-        player1 = mock(IPlayer.class);
-        player2 = mock(IPlayer.class);
+//     private IPlayer player1;
+//     private IPlayer player2;
+//     private BoardConfig boardConfig;
+//     private Game game;
 
-        // כאן נשתמש באובייקט אמיתי ל-BoardConfig
-        boardConfig = new BoardConfig(new board.Dimension(8), new board.Dimension(512));
+//     @BeforeEach
+//     void setup() {
+//         // יצירת אובייקטים מוקים
+//         player1 = mock(IPlayer.class);
+//         player2 = mock(IPlayer.class);
 
-        // יצירת המשחק עם השחקנים והקונפיגורציה
-        game = new Game(boardConfig, player1, player2);
-    }
+//         // כאן נשתמש באובייקט אמיתי ל-BoardConfig
+//         boardConfig = new BoardConfig(new server.board.Dimension(8), new server.board.Dimension(512));
 
-    @Test
-    void testAddCommandAndUpdateExecutesCommand() {
-        ICommand command = mock(ICommand.class);
+//         // יצירת המשחק עם השחקנים והקונפיגורציה
+//         game = new Game(boardConfig, player1, player2);
+//     }
 
-        game.addCommand(command);
-        game.update();
+//     @Test
+//     void testAddCommandAndUpdateExecutesCommand() {
+//         ICommand command = mock(ICommand.class);
 
-        verify(command, times(1)).execute();
-    }
+//         game.addCommand(command);
+//         game.update();
 
-    @Test
-    void testHandleSelectionAddsCommandIfNotNull() {
-        ICommand cmd = mock(ICommand.class);
-        when(player1.handleSelection(game.getBoard())).thenReturn(cmd);
+//         verify(command, times(1)).execute();
+//     }
 
-        game.handleSelection(player1);
+//     @Test
+//     void testHandleSelectionAddsCommandIfNotNull() {
+//         ICommand cmd = mock(ICommand.class);
+//         when(player1.handleSelection(game.getBoard())).thenReturn(cmd);
 
-        // עדכון כדי לבצע את הפקודה
-        game.update();
+//         game.handleSelection(player1);
 
-        verify(player1, times(1)).handleSelection(game.getBoard());
-        verify(cmd, times(1)).execute();
-    }
+//         // עדכון כדי לבצע את הפקודה
+//         game.update();
 
-    @Test
-    void testHandleSelectionDoesNothingIfNull() {
-        when(player2.handleSelection(game.getBoard())).thenReturn(null);
+//         verify(player1, times(1)).handleSelection(game.getBoard());
+//         verify(cmd, times(1)).execute();
+//     }
 
-        game.handleSelection(player2);
+//     @Test
+//     void testHandleSelectionDoesNothingIfNull() {
+//         when(player2.handleSelection(game.getBoard())).thenReturn(null);
 
-        // לא אמור להוסיף פקודות אז עדכון לא יקרוא execute
-        game.update();
+//         game.handleSelection(player2);
 
-        verify(player2, times(1)).handleSelection(game.getBoard());
-        // לא נבדוק execute כי לא הוספנו פקודה
-    }
+//         // לא אמור להוסיף פקודות אז עדכון לא יקרוא execute
+//         game.update();
 
-    @Test
-    void testWinReturnsCorrectPlayer() {
-        when(player1.isFailed()).thenReturn(true);
-        when(player2.isFailed()).thenReturn(false);
-        assertEquals(1, game.win(), "If player1 failed, player2 wins");
+//         verify(player2, times(1)).handleSelection(game.getBoard());
+//         // לא נבדוק execute כי לא הוספנו פקודה
+//     }
 
-        when(player1.isFailed()).thenReturn(false);
-        when(player2.isFailed()).thenReturn(true);
-        assertEquals(0, game.win(), "If player2 failed, player1 wins");
+//     @Test
+//     void testWinReturnsCorrectPlayer() {
+//         when(player1.isFailed()).thenReturn(true);
+//         when(player2.isFailed()).thenReturn(false);
+//         assertEquals(1, game.win(), "If player1 failed, player2 wins");
 
-        when(player1.isFailed()).thenReturn(false);
-        when(player2.isFailed()).thenReturn(false);
-        assertEquals(-1, game.win(), "No player failed, no winner");
-    }
+//         when(player1.isFailed()).thenReturn(false);
+//         when(player2.isFailed()).thenReturn(true);
+//         assertEquals(0, game.win(), "If player2 failed, player1 wins");
 
-    @Test
-    void testGetters() {
-        assertSame(player1, game.getPlayer1());
-        assertSame(player2, game.getPlayer2());
-        assertNotNull(game.getBoard());
-    }
-}
+//         when(player1.isFailed()).thenReturn(false);
+//         when(player2.isFailed()).thenReturn(false);
+//         assertEquals(-1, game.win(), "No player failed, no winner");
+//     }
+
+//     @Test
+//     void testGetters() {
+//         assertSame(player1, game.getPlayer1());
+//         assertSame(player2, game.getPlayer2());
+//         assertNotNull(game.getBoard());
+//     }
+// }

@@ -1,7 +1,9 @@
 package state;
 
-import interfaces.*;
-import pieces.Position;
+import server.interfaces.*;
+import server.pieces.Position;
+import server.state.State;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

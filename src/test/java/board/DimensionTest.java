@@ -1,7 +1,8 @@
 package board;
 
-import board.Dimension;
 import org.junit.jupiter.api.Test;
+
+import server.board.Dimension;
 
 import static org.junit.jupiter.api.Assertions.*;
 

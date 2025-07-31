@@ -2,8 +2,9 @@ package player;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pieces.Position;
-import player.PlayerCursor;
+
+import server.pieces.Position;
+import server.player.PlayerCursor;
 
 import java.awt.*;
 
